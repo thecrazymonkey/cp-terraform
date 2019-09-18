@@ -1,7 +1,6 @@
 locals {
   component   = "${var.component}"
   server_sets = "${var.server_sets}"
-  key_name    = "${var.key_name}"
   zone_id     = "${var.dns_zone}"
 }
 resource "aws_instance" "this" {
@@ -12,6 +11,7 @@ resource "aws_instance" "this" {
   vpc_security_group_ids = var.cluster_sg
   subnet_id              = var.subnet_id
   ami                    = var.ami
+  key_name               = "${var.key_name}"
   root_block_device {
       volume_type = "gp2"
       volume_size = "${local.server_sets[local.component]["volume_size"]}"
