@@ -47,7 +47,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["74.96.192.160/32"]
+    cidr_blocks = ["${var.my_ip}"]
   }
 
   ingress {
@@ -65,200 +65,91 @@ resource "aws_security_group" "cluster_sg" {
   }
 }
 
-resource "aws_instance" "ec2_cluster_zookeeper" {
-#  source                 = "terraform-aws-modules/ec2-instance/aws"
-#  version                = "~> 2.0"
-  count                  = "${var.server_sets["zk"]["count"]}"
-  key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["zk"]["size"]}"
-  monitoring             = false
-  associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+module "cp_ec2_zk" {
+  source = "./cp-component"
+  component = "zk"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["zk"]["volume_size"]}"
-  }
-  tags = {
-    Name = "zk${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-zookeeper-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53zk" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["zk"]["count"]}"
-  name    = "zk${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_zookeeper[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_broker" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["broker"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["broker"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
+}
+
+module "cp_ec2_bk" {
+  source = "./cp-component"
+  component = "broker"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["broker"]["volume_size"]}"
-  }
-  tags = {
-    Name = "kafka${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-broker-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53bk" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["broker"]["count"]}"
-  name    = "kafka${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_broker[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_connect" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["connect"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["connect"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
+}
+
+module "cp_ec2_co" {
+  source = "./cp-component"
+  component = "connect"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["connect"]["volume_size"]}"
-  }
-  tags = {
-    Name = "connect${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-connect-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53co" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["connect"]["count"]}"
-  name    = "connect${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_connect[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_schemaregistry" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["schemaregistry"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["schemaregistry"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
+}
+module "cp_ec2_rp" {
+  source = "./cp-component"
+  component = "restproxy"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["schemaregistry"]["volume_size"]}"
-  }
-  tags = {
-    Name = "schemaregistry${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-schemaregistry-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53sc" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["schemaregistry"]["count"]}"
-  name    = "schemaregistry${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_schemaregistry[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_restproxy" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["restproxy"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["restproxy"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
+}
+module "cp_ec2_sr" {
+  source = "./cp-component"
+  component = "schemaregistry"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["restproxy"]["volume_size"]}"
-  }
-  tags = {
-    Name = "restproxy${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-restproxy-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53rp" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["restproxy"]["count"]}"
-  name    = "restproxy${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_restproxy[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_ksql" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["ksql"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["ksql"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
+}
+
+module "cp_ec2_ks" {
+  source = "./cp-component"
+  component = "ksql"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["ksql"]["volume_size"]}"
-  }
-  tags = {
-    Name = "ksql${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-ksql-${count.index+1}"
-  }
-}
-
-resource "aws_route53_record" "rt53ks" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["ksql"]["count"]}"
-  name    = "ksql${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_ksql[count.index].public_dns}"]
-}
-
-resource "aws_instance" "ec2_cluster_controlcenter" {
-  associate_public_ip_address = true
-  count                  = "${var.server_sets["controlcenter"]["count"]}"
   key_name               = "${var.key_name}"
-  ami                    = data.aws_ami.centos.id
-  instance_type          = "${var.server_sets["controlcenter"]["size"]}"
-  monitoring             = false
-  vpc_security_group_ids = [aws_security_group.cluster_sg.id]
-  subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
-  root_block_device {
-      volume_type = "gp2"
-      volume_size = "${var.server_sets["controlcenter"]["volume_size"]}"
-  }
-  tags = {
-    Name = "controlcenter${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-    ivan_cluster = "${var.name_prefix}-controlcenter-${count.index+1}"
-  }
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
 }
 
-resource "aws_route53_record" "rt53cs" {
-  zone_id = "${var.dns_zone}"
-  count   = "${var.server_sets["controlcenter"]["count"]}"
-  name    = "controlcenter${count.index+1}.${var.name_prefix}.confluent.nerdynick.net"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["${aws_instance.ec2_cluster_controlcenter[count.index].public_dns}"]
+module "cp_ec2_cc" {
+  source = "./cp-component"
+  component = "controlcenter"
+  server_sets = "${var.server_sets}"
+  ami = data.aws_ami.centos.id
+  cluster_sg = [aws_security_group.cluster_sg.id]
+  subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
+  key_name               = "${var.key_name}"
+  domain_name               = "${var.domain_name}"
+  name_prefix               = "${var.name_prefix}"
+  dns_zone = "${var.dns_zone}"
 }
