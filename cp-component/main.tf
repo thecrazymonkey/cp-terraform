@@ -12,6 +12,7 @@ resource "aws_instance" "this" {
   subnet_id              = var.subnet_id
   ami                    = var.ami
   key_name               = "${var.key_name}"
+  user_data              = "#!/bin/bash\nhostnamectl set-hostname --static ${local.server_sets[local.component]["dns_name"]}${count.index+1}.${var.name_prefix}.${var.domain_name}"
   root_block_device {
       volume_type = "gp2"
       volume_size = "${local.server_sets[local.component]["volume_size"]}"
