@@ -1,6 +1,5 @@
 variable "component" {
   description = "Name to be used to select from the set"
-  type        = string
 }
 
 variable "ami" {

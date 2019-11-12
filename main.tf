@@ -1,4 +1,7 @@
 # simple terraform to creat CP cluster within AWS, software provisioning to be done via cp-ansible
+data "dns_a_record_set" "my_ip" {
+  host =  var.my_dns
+}
 
 provider "aws" {
   version = "~> 2.0"
@@ -47,7 +50,24 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "SSH client"
+  }
+
+  ingress {
+    from_port   = 9093
+    to_port     = 9093
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "Broker (SSL) listener"
+  }
+
+  ingress {
+    from_port   = 2181
+    to_port     = 2181
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "Zookeeper"
   }
 
   ingress {

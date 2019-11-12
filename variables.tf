@@ -6,9 +6,10 @@ variable "dns_zone" {
   # nerdynick
   default = "Z7RSBY5AAK0K7"
 }
-variable "my_ip" {
-  default = "74.96.192.160/32"
+variable "my_dns" {
+  default = "crazymonkey.duckdns.org"
 }
+
 variable "name_prefix" {
   default = "ivan"
 }
