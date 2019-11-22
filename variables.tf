@@ -26,7 +26,7 @@ variable "server_sets" {
   default = {
     "zk" = {
         count = 3,
-        size = "t3a.small",
+        size = "t3a.micro",
         volume_size = 10,
         dns_name = "zk"
     }

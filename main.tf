@@ -63,6 +63,30 @@ resource "aws_security_group" "cluster_sg" {
   }
 
   ingress {
+    from_port   = 8081
+    to_port     = 8083
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "Schema registry, Connect, KSQL"
+  }
+
+  ingress {
+    from_port   = 8088
+    to_port     = 8088
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "KSQL"
+  }
+ 
+  ingress {
+    from_port   = 9021
+    to_port     = 9021
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    description = "Control Center"
+  }
+
+  ingress {
     from_port   = 2181
     to_port     = 2181
     protocol    = "tcp"
