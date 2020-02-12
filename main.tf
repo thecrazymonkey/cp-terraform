@@ -58,7 +58,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 9093
     to_port     = 9093
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Broker (SSL) listener"
   }
 
@@ -66,7 +66,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 9999
     to_port     = 9999
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "JMX port"
   }
 
@@ -74,7 +74,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 8081
     to_port     = 8083
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Schema registry, Connect, KSQL"
   }
 
@@ -82,7 +82,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 8088
     to_port     = 8088
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "KSQL"
   }
  
@@ -90,7 +90,7 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 9021
     to_port     = 9021
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Control Center"
   }
 
@@ -98,8 +98,23 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 2181
     to_port     = 2181
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32",data.dns_a_record_set.my_ip.addrs[0])]
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Zookeeper"
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "JMX exporter"
+  }
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "Prometheus"
   }
 
   ingress {

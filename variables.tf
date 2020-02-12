@@ -3,18 +3,18 @@ variable "region" {
   default = "us-east-1"
 }
 variable "dns_zone" {
-  # nerdynick
-  default = "Z7RSBY5AAK0K7"
+  # ps.confluent.io
+  default = "Z3DYW71V76XUGV"
 }
 variable "name_prefix" {
-  default = "ivan"
+  default = "ivan.aws"
 }
 variable "key_name" {
   default = "ivan_bootcamp"
 }
 
 variable "domain_name" {
-  default = "confluent.nerdynick.net"
+  default = "ps.confluent.io"
 }
 
 variable "server_sets" {
