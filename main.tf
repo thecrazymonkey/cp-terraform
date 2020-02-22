@@ -42,8 +42,8 @@ data "aws_ami" "centos" {
 #  instance_type = "t2.micro"
 #}
 resource "aws_security_group" "cluster_sg" {
-  name        = "${var.name_prefix}_sg"
-  description = "SG for ${var.name_prefix}s clusters"
+  name        = "${var.user_name}_sg"
+  description = "SG for ${var.user_name}s clusters"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -130,6 +130,9 @@ resource "aws_security_group" "cluster_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  tags = {
+    Owner = var.user_name
+  }
 }
 
 module "cp_ec2_zk" {
@@ -140,8 +143,9 @@ module "cp_ec2_zk" {
   cluster_sg = [aws_security_group.cluster_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 
@@ -155,6 +159,7 @@ module "cp_ec2_bk" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 
@@ -168,6 +173,7 @@ module "cp_ec2_co" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 module "cp_ec2_rp" {
@@ -180,6 +186,7 @@ module "cp_ec2_rp" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 module "cp_ec2_sr" {
@@ -192,6 +199,7 @@ module "cp_ec2_sr" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 
@@ -205,6 +213,7 @@ module "cp_ec2_ks" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }
 
@@ -218,5 +227,6 @@ module "cp_ec2_cc" {
   key_name               = var.key_name
   domain_name               = var.domain_name
   name_prefix               = var.name_prefix
+  user_name              = var.user_name
   dns_zone = var.dns_zone
 }

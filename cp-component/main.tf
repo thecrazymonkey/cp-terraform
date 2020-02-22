@@ -21,7 +21,7 @@ resource "aws_instance" "this" {
   tags = {
     Name = "${local.server_sets[local.component]["dns_name"]}${count.index+1}.${var.name_prefix}.${var.domain_name}"
     ivan_cluster = "${var.name_prefix}-${local.server_sets[local.component]["dns_name"]}-${count.index+1}"
-    Owner = "Ivan"
+    Owner = "${var.user_name}"
   }
 }
 

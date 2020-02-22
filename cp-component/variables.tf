@@ -32,6 +32,10 @@ variable "name_prefix" {
   type        = string
 }
 
+variable "user_name" {
+  type        = string
+}
+
 variable "domain_name" {
   type        = string
 }

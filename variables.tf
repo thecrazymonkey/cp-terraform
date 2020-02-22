@@ -9,8 +9,11 @@ variable "dns_zone" {
 variable "name_prefix" {
   default = "ivan.aws"
 }
+variable "user_name" {
+  default = "ivan"
+}
 variable "key_name" {
-  default = "ivan_bootcamp"
+  default = "ivan"
 }
 
 variable "domain_name" {
