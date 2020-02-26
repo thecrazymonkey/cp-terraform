@@ -37,6 +37,10 @@ data "aws_ami" "centos" {
   }
 }
 
+data "aws_security_group" "kerberos_sg" {
+  name = "${var.user_name}_pes_sg"
+  vpc_id = data.aws_vpc.default.id
+}
 #resource "aws_instance" "ivan_jump" {
 #  ami           = "ami-02eac2c0129f6376b"
 #  instance_type = "t2.micro"
@@ -132,6 +136,7 @@ resource "aws_security_group" "cluster_sg" {
   }
   tags = {
     Owner = var.user_name
+    Name  = "${var.user_name}_sg"
   }
 }
 
@@ -140,7 +145,7 @@ module "cp_ec2_zk" {
   component = "zk"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name            = var.domain_name
@@ -154,7 +159,7 @@ module "cp_ec2_bk" {
   component = "broker"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
@@ -168,7 +173,7 @@ module "cp_ec2_co" {
   component = "connect"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
@@ -181,7 +186,7 @@ module "cp_ec2_rp" {
   component = "restproxy"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
@@ -194,7 +199,7 @@ module "cp_ec2_sr" {
   component = "schemaregistry"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
@@ -208,7 +213,7 @@ module "cp_ec2_ks" {
   component = "ksql"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
@@ -222,7 +227,7 @@ module "cp_ec2_cc" {
   component = "controlcenter"
   server_sets = var.server_sets
   ami = data.aws_ami.centos.id
-  cluster_sg = [aws_security_group.cluster_sg.id]
+  cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
   domain_name               = var.domain_name
