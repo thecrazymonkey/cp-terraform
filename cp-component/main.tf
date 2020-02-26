@@ -33,3 +33,12 @@ resource "aws_route53_record" "this" {
   ttl     = "300"
   records = [aws_instance.this[count.index].public_dns]
 }
+
+// A variable for extracting the internal ip of the instance
+output "ip" {
+  value = aws_instance.this.*.private_ip
+}
+// A variable for extracting the hostname of the instance
+output "hostname" {
+  value = aws_route53_record.this.*.fqdn
+}

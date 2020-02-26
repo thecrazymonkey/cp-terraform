@@ -59,8 +59,8 @@ resource "aws_security_group" "cluster_sg" {
   }
 
   ingress {
-    from_port   = 9093
-    to_port     = 9093
+    from_port   = 9091
+    to_port     = 9094
     protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Broker (SSL) listener"

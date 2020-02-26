@@ -57,7 +57,7 @@ resource "aws_security_group" "cluster_sg" {
   ingress {
     from_port   = 749
     to_port     = 749
-    protocol    = "udp"
+    protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Admin"
   }
@@ -66,6 +66,14 @@ resource "aws_security_group" "cluster_sg" {
     from_port   = 88
     to_port     = 88
     protocol    = "udp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "KDC port"
+  }
+
+  ingress {
+    from_port   = 88
+    to_port     = 88
+    protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "KDC port"
   }
