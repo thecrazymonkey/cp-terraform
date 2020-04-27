@@ -56,8 +56,8 @@ variable "server_sets" {
     "controlcenter" = {
         count = 0,
         size = "t3a.medium",
-        volume_size = 30,
-        dns_name = "kafka"
+        volume_size = 50,
+        dns_name = "controlcenter"
     }
     "ksql" = {
         count = 0,

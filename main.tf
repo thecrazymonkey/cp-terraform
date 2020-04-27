@@ -120,6 +120,13 @@ resource "aws_security_group" "cluster_sg" {
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Prometheus"
   }
+  ingress {
+    from_port   = 8090
+    to_port     = 8090
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "MDS"
+  }
 
   ingress {
     from_port   = 0
