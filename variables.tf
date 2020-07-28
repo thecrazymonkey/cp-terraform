@@ -15,11 +15,15 @@ variable "user_name" {
 variable "key_name" {
   default = "ivan_cloud"
 }
-
+variable "owner_email" {
+  default = "ikunz@confluent.io"
+}
+variable "owner_name" {
+  default = "Ivan Kunz"
+}
 variable "domain_name" {
   default = "ps.confluent.io"
 }
-
 variable "server_sets" {
   description = "Describes specific settings for individual CP servers (count, type, .....)"
   default = {
@@ -30,7 +34,7 @@ variable "server_sets" {
         dns_name = "zk"
     }
     "broker" = {
-        count = 3,
+        count = 4,
         size = "t3a.medium",
         volume_size = 50,
         dns_name = "kafka"

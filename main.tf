@@ -60,14 +60,14 @@ resource "aws_security_group" "cluster_sg" {
 
   ingress {
     from_port   = 9091
-    to_port     = 9094
+    to_port     = 9095
     protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "Broker (SSL) listener"
   }
 
   ingress {
-    from_port   = 9999
+    from_port   = 9990
     to_port     = 9999
     protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
@@ -122,7 +122,7 @@ resource "aws_security_group" "cluster_sg" {
   }
   ingress {
     from_port   = 8090
-    to_port     = 8090
+    to_port     = 8091
     protocol    = "tcp"
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "MDS"
@@ -142,7 +142,9 @@ resource "aws_security_group" "cluster_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Owner = var.user_name
+    Owner_Name = var.owner_name
+    Owner_Email = var.owner_email
+    Owner = var.owner_name
     Name  = "${var.user_name}_sg"
   }
 }
@@ -158,7 +160,9 @@ module "cp_ec2_zk" {
   domain_name            = var.domain_name
   name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 
 module "cp_ec2_bk" {
@@ -169,10 +173,12 @@ module "cp_ec2_bk" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 
 module "cp_ec2_co" {
@@ -183,10 +189,12 @@ module "cp_ec2_co" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 module "cp_ec2_rp" {
   source = "./cp-component"
@@ -196,10 +204,12 @@ module "cp_ec2_rp" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 module "cp_ec2_sr" {
   source = "./cp-component"
@@ -209,10 +219,12 @@ module "cp_ec2_sr" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 
 module "cp_ec2_ks" {
@@ -223,10 +235,12 @@ module "cp_ec2_ks" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }
 
 module "cp_ec2_cc" {
@@ -237,8 +251,10 @@ module "cp_ec2_cc" {
   cluster_sg = [aws_security_group.cluster_sg.id,data.aws_security_group.kerberos_sg.id]
   subnet_id              = tolist(data.aws_subnet_ids.all.ids)[0]
   key_name               = var.key_name
-  domain_name               = var.domain_name
-  name_prefix               = var.name_prefix
+  domain_name            = var.domain_name
+  name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone
 }

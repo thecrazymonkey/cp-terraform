@@ -36,6 +36,13 @@ variable "user_name" {
   type        = string
 }
 
+variable "owner_email" {
+  type        = string
+}
+variable "owner_name" {
+  type        = string
+}
+
 variable "domain_name" {
   type        = string
 }
