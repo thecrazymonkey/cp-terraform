@@ -7,15 +7,20 @@ variable "dns_zone" {
   default = "Z3DYW71V76XUGV"
 }
 variable "name_prefix" {
-  default = "ivan.aws"
+  default = "ivan"
 }
 variable "user_name" {
   default = "ivan"
 }
 variable "key_name" {
-  default = "ivan"
+  default = "ivan_cloud"
 }
-
+variable "owner_email" {
+  default = "ikunz@confluent.io"
+}
+variable "owner_name" {
+  default = "Ivan Kunz"
+}
 variable "domain_name" {
   default = "ps.confluent.io"
 }

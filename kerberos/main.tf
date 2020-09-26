@@ -77,6 +77,21 @@ resource "aws_security_group" "cluster_sg" {
     cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
     description = "KDC port"
   }
+  ingress {
+    from_port   = 389
+    to_port     = 389
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "LDAP port"
+  }
+
+  ingress {
+    from_port   = 636
+    to_port     = 636
+    protocol    = "tcp"
+    cidr_blocks = [format("%s/32",chomp(data.http.myip.body))]
+    description = "LDAP port"
+  }
 
   ingress {
     from_port   = 0
@@ -92,8 +107,10 @@ resource "aws_security_group" "cluster_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Owner = var.user_name
-  }
+    Owner_Name = var.owner_name
+    Owner_Email = var.owner_email
+    Owner = var.owner_name
+  }  
 }
 
 module "cp_ec2_pes" {
@@ -107,5 +124,7 @@ module "cp_ec2_pes" {
   domain_name            = var.domain_name
   name_prefix            = var.name_prefix
   user_name              = var.user_name
-  dns_zone = var.dns_zone
+  owner_name             = var.owner_name
+  owner_email            = var.owner_email
+  dns_zone               = var.dns_zone  
 }
