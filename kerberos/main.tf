@@ -4,7 +4,6 @@ data "http" "myip" {
 }
 
 provider "aws" {
-  version = "~> 2.0"
   region  = var.region
   profile = "confluentsa"
 }

@@ -4,7 +4,7 @@ data "http" "myip" {
 }
 
 provider "aws" {
-  version = "~> 2.0"
+#  version = "~> 2.0"
   region  = var.region
   profile = "confluentsa"
 }
@@ -46,7 +46,7 @@ data "aws_security_group" "kerberos_sg" {
 #  instance_type = "t2.micro"
 #}
 resource "aws_security_group" "cluster_sg" {
-  name        = "${var.user_name}_sg"
+  name        = "${var.name_prefix}_tf_sg"
   description = "SG for ${var.user_name}s clusters"
   vpc_id      = data.aws_vpc.default.id
 
@@ -145,7 +145,7 @@ resource "aws_security_group" "cluster_sg" {
     Owner_Name = var.owner_name
     Owner_Email = var.owner_email
     Owner = var.owner_name
-    Name  = "${var.user_name}_sg"
+    Name  = "${var.name_prefix}_tf_sg"
   }
 }
 

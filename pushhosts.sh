@@ -1,6 +1,7 @@
 #!/bin/bash
 #servers=$(<test)
-servers=$(terraform output -json)
+state=${1:-terraform}
+servers=$(terraform output -state=$state.tfstate -json)
 rm -f temp_hosts
 touch temp_hosts
 for x in `echo $servers | jq -r 'keys | .[]' | grep -v _ip`;
