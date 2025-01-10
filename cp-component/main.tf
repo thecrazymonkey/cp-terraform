@@ -13,9 +13,11 @@ resource "aws_instance" "this" {
   ami                    = var.ami
   key_name               = var.key_name
 # in case you need to overwrite hostname on VM
-  user_data              = "#!/bin/bash\nhostnamectl set-hostname ${local.server_sets[local.component]["dns_name"]}${count.index+1}.${var.name_prefix}.${var.domain_name}"
+  user_data = base64encode(templatefile("${path.module}/cloud-init.sh", { new_hostname = "${local.server_sets[local.component]["dns_name"]}${count.index+1}.${var.name_prefix}.${var.domain_name}" }))
+#  user_data              = "#!/bin/bash\nhostnamectl set-hostname ${local.server_sets[local.component]["dns_name"]}${count.index+1}.${var.name_prefix}.${var.domain_name}"
+  user_data_replace_on_change = true
   root_block_device {
-      volume_type = "gp2"
+      volume_type = local.server_sets[local.component]["volume_type"]
       volume_size = local.server_sets[local.component]["volume_size"]
   }
   tags = {
@@ -24,6 +26,8 @@ resource "aws_instance" "this" {
     Owner = var.user_name
     Owner_Name = var.owner_name
     Owner_Email = var.owner_email
+    cflt_managed_by = "user"
+    cflt_managed_id = var.owner_name    
   }
 }
 

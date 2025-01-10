@@ -1,59 +1,36 @@
 # Configure the AWS Provider
-variable "region" {
-  default = "us-east-1"
-}
-variable "dns_zone" {
-  # some.zone.io
-  default = "BLAHBLAH"
-}
-variable "name_prefix" {
-  default = "test"
-}
-variable "user_name" {
-  default = "test"
-}
-variable "key_name" {
-  default = "test_key"
-}
-variable "owner_email" {
-  default = "test@some.io"
-}
-variable "owner_name" {
-  default = "test"
-}
-variable "domain_name" {
-  default = "some.zone.io"
-}
-variable "ami" {
+region = "us-east-1"
+dns_zone = "Z01489812B6V0685KWQLS"
+name_prefix = "ivan"
+user_name = "ivan"
+key_name = "ivan-nova"
+owner_email = "ikunz@confluent.io"
+owner_name = "Ivan Kunz"
+domain_name = "aws.cse.confluent.io"
+ami = {
   # AWS Linux 2023
-  default = {
-    owner = 137112412989
-    ami = "ami-06b21ccaeff8cd686"
-    name_regex = ""
-  }
+  owner = "137112412989"
+  name_regex = "Amazon Linux 2023 AMI*"
 }
-
-variable "server_sets" {
-  description = "Describes specific settings for individual CP servers (count, type, .....)"
-  default = {
+server_sets = {
     "zk" = {
         count = 0,
-        size = "t3a.micro",
+        size = "t3a.medium",
         volume_size = 10,
         dns_name = "zk"
         volume_type = "gp2"
     }
-    "kraft" = {
+    "kafka_controller" = {
         count = 3,
-        size = "t3a.micro",
+        size = "t3a.medium",
         volume_size = 10,
         dns_name = "kraft"
         volume_type = "gp2"
     }
     "broker" = {
         count = 3,
-        size = "t3a.medium",
-        volume_size = 50,
+        size = "t3a.large",
+        volume_size = 300,
         dns_name = "kafka"
         volume_type = "gp2"
     }
@@ -80,17 +57,17 @@ variable "server_sets" {
     }
     "controlcenter" = {
         count = 1,
-        size = "t3a.medium",
+        size = "t3a.xlarge",
         volume_size = 50,
         dns_name = "controlcenter"
         volume_type = "gp2"
     }
     "ksql" = {
         count = 0,
-        size = "t3a.medium",
+        size = "r5.xlarge",
         volume_size = 50,
         dns_name = "ksql"
         volume_type = "gp2"
     }
   }
-}
+

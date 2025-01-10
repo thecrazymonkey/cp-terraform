@@ -20,6 +20,9 @@ output "ksql_ip" {
 output "control_center_ip" {
  value = module.cp_ec2_cc.*.ip
 }
+output "kafka_controller_ip" {
+ value = module.cp_ec2_kafka_controller.*.ip
+}
 output "zookeeper" {
  value = module.cp_ec2_zk.*.hostname
 }
@@ -40,4 +43,8 @@ output "ksql" {
 }
 output "control_center" {
  value = module.cp_ec2_cc.*.hostname
+}
+
+output "kafka_controller" {
+ value = module.cp_ec2_kafka_controller.*.hostname
 }

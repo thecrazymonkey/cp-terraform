@@ -17,23 +17,23 @@ data "aws_subnet_ids" "all" {
 }
 
 data "aws_ami" "centos" {
-  owners      = ["aws-marketplace"]
+  owners      = ["amazon", "099720109477"]
   most_recent = true
 
   filter {
-      name   = "product-code"
-      values = ["aw0evgkw8e5c1q413zgy5pjce"]
+      name   = "image-id"
+      values = ["ami-0a3db6a6bb59b68d3"]
   }
 
-  filter {
-      name   = "architecture"
-      values = ["x86_64"]
-  }
+#  filter {
+#      name   = "architecture"
+#      values = ["x86_64"]
+#  }
 
-  filter {
-      name   = "root-device-type"
-      values = ["ebs"]
-  }
+#  filter {
+#      name   = "root-device-type"
+#      values = ["ebs"]
+#  }
 }
 
 #resource "aws_instance" "ivan_jump" {

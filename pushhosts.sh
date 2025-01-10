@@ -1,4 +1,5 @@
 #!/bin/bash
+#set -x
 #servers=$(<test)
 state=${1:-terraform}
 servers=$(terraform output -state=$state.tfstate -json)
@@ -19,6 +20,6 @@ while read line; do
     host=$(echo $line | awk '{print $2}')
     all_hosts=$(cat temp_hosts)
     export all_hosts
-    ssh -n -t -o SendEnv=all_hosts centos@$host 'echo "'"$all_hosts"'" | sudo tee -a /etc/hosts > /dev/null'
+    ssh -n -t -o SendEnv=all_hosts ubuntu@$host 'echo "'"$all_hosts"'" | sudo tee -a /etc/hosts > /dev/null'
 done < temp_hosts
 rm -f temp_hosts

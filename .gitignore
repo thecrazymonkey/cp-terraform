@@ -6,3 +6,10 @@ myplan
 cluster
 central-mds
 *.tfstate*
+cluster-small
+cluster-small.tfvars
+cluster.tfvars
+auditlog.tfvars
+.fake
+.ionide
+.vscode
